@@ -1,0 +1,83 @@
+{
+  "name": "owx",
+  "version": "0.0.0",
+  "description": "owx",
+  "keywords": [
+    "ow",
+    "type",
+    "types",
+    "check",
+    "checking",
+    "guard",
+    "guards",
+    "assert",
+    "assertion",
+    "predicate",
+    "predicates",
+    "is",
+    "validate",
+    "validation",
+    "validator",
+    "utility",
+    "util",
+    "typeof",
+    "instanceof",
+    "object"
+  ],
+  "author": "Junyoung Choi <rokt33r.choi@gmail.com>",
+  "homepage": "https://github.com/rokt33r/owx",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/index.d.ts",
+    "dist/**/*"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rokt33r/owx.git"
+  },
+  "scripts": {
+    "build": "rimraf dist && tsc -P tsconfig.build.json",
+    "lint": "prettier --check src/**/*.ts specs/**/*.ts",
+    "format": "prettier --write src/**/*.ts specs/**/*.ts",
+    "test": "npm run lint && npm run test-type && npm run test-coverage",
+    "test-type": "tsc --noEmit",
+    "test-api": "jest",
+    "test-coverage": "jest --coverage",
+    "codecov": "codecov",
+    "prepublishOnly": "npm run lint && npm test && npm run build"
+  },
+  "bugs": {
+    "url": "https://github.com/rokt33r/owx/issues"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.6.0",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/preset-env": "^7.6.0",
+    "@babel/preset-typescript": "^7.6.0",
+    "@types/jest": "^24.0.18",
+    "ava": "^2.3.0",
+    "babel-jest": "^24.9.0",
+    "codecov": "^3.5.0",
+    "jest": "^24.9.0",
+    "nyc": "^14.1.1",
+    "prettier": "^1.17.1",
+    "rimraf": "^3.0.0",
+    "ts-node": "^8.3.0",
+    "typescript": "^3.4.5"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "transform": {
+      "^.+\\.[t|j]sx?$": "babel-jest"
+    },
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/dist/"
+    ]
+  },
+  "dependencies": {
+    "@sindresorhus/is": "^1.0.0"
+  }
+}
