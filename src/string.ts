@@ -1,4 +1,4 @@
-import { Validator, Predicate } from './owx'
+import { Validator, Predicator, Predicate } from './owx'
 import is from '@sindresorhus/is'
 
 export const stringValidator: Validator<string> = {
@@ -60,28 +60,27 @@ export function createStringMatchValidator(
   }
 }
 
-export class StringPredicate extends Predicate {
-  addValidator(validator: Validator<string, string>) {
-    this.validators.push(validator)
-    return this
+class StringPredicator implements Predicator<Predicate<string>> {
+  constructor(validators: Validator<any>[] = [stringValidator]) {
+    this.predicate = {
+      validators
+    }
   }
+  predicate: Predicate<string>
+
   length(length: number) {
-    return this.addValidator(createStringLengthValidator(length))
+    return new StringPredicator([
+      ...this.predicate.validators,
+      createStringLengthValidator(length)
+    ])
   }
+  // min(length: number): StringPredicate
 
-  min(length: number) {
-    return this.addValidator(createStringMinLengthValidator(length))
-  }
+  // max(length: number): StringPredicate
 
-  max(length: number) {
-    return this.addValidator(createStringMaxLengthValidator(length))
-  }
-
-  match(regExp: RegExp) {
-    return this.addValidator(createStringMatchValidator(regExp))
-  }
+  // match(regExp: RegExp): StringPredicate
 }
 
-export function owStr() {
-  return new StringPredicate().addValidator(stringValidator)
+export function owStr(): StringPredicator {
+  return new StringPredicator()
 }

@@ -12,12 +12,17 @@ describe('owObj', () => {
 
   describe('#shape', () => {
     it('validates with shape', () => {
-      const input = {
+      let input: unknown = {
         message: 123
-      } as unknown
-      const predicate = owObj().shape({
+      }
+      const shape = {
         message: owStr()
-      })
+      }
+      const predicate = owObj().shape(shape)
+
+      if (isValid(input, predicate)) {
+        input
+      }
 
       const result = reportValidation(input, predicate)
 

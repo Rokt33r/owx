@@ -1,10 +1,11 @@
 import is from '@sindresorhus/is'
 import {
   Validator,
-  PredicateShape,
-  ValidatedObject,
-  Predicate,
-  reportValidation
+  PredicatorShape,
+  Unshape,
+  Predicator,
+  reportValidation,
+  Predicate
 } from './owx'
 
 export const objectValidator: Validator<object> = {
@@ -14,12 +15,12 @@ export const objectValidator: Validator<object> = {
   }
 }
 
-export function createObjectShapeValidator<P extends PredicateShape>(
+export function createObjectShapeValidator<P extends PredicatorShape>(
   shape: P
-): Validator<ValidatedObject<P>, object> {
+): Validator<Unshape<P>, object> {
   const messageSymbol = Symbol()
   return {
-    validate(input, context): input is ValidatedObject<P> {
+    validate(input, context): input is Unshape<P> {
       for (const key of Object.keys(shape)) {
         const message = reportValidation(input, shape[key])
         if (message != null) {
@@ -36,22 +37,27 @@ export function createObjectShapeValidator<P extends PredicateShape>(
   }
 }
 
-export class ObjectPredicate<T extends object> extends Predicate<T> {
-  validators = [objectValidator]
-
-  addValidator<O extends object>(
-    validator: Validator<O, object>
-  ): ObjectPredicate<O> {
-    this.validators.push(validator)
-    return this
+class ObjectPredicator<O extends object>
+  implements Predicator<Predicate<object>> {
+  constructor(validators: Validator<any>[] = [objectValidator]) {
+    this.predicate = {
+      validators
+    }
   }
+  predicate: Predicate<O>
 
-  shape<P extends PredicateShape>(shape: P): ObjectPredicate<P> {
-    const validator = createObjectShapeValidator(shape)
-    return this.addValidator(validator)
+  shape<S extends PredicatorShape>(shape: S) {
+    return new ObjectPredicator<S & O>([
+      ...this.predicate.validators,
+      createObjectShapeValidator(shape)
+    ])
   }
 }
 
 export function owObj() {
-  return new ObjectPredicate()
+  return new ObjectPredicator()
+}
+
+export function owShape<S extends PredicatorShape>(shape: S) {
+  return owObj().shape(shape)
 }
