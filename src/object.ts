@@ -11,9 +11,12 @@ import {
 export const objectValidator: Validator<object> = {
   validate: is.object,
   report(input) {
-    return `Expected to be object, got '${input}'`
+    return `Expected value to be object, got \`${input}\``
   }
 }
+
+const valueErrorRegexp = /^Expected value/
+const propertyErrorRegexp = /^Expected property, `(.+)`,/
 
 export function createObjectShapeValidator<P extends PredicatorShape>(
   shape: P
@@ -22,7 +25,8 @@ export function createObjectShapeValidator<P extends PredicatorShape>(
   return {
     validate(input, context): input is Unshape<P> {
       for (const key of Object.keys(shape)) {
-        const message = reportValidation(input, shape[key])
+        const message = reportValidation(input[key], shape[key])
+
         if (message != null) {
           context[messageSymbol] = { key, message }
           return false
@@ -30,9 +34,17 @@ export function createObjectShapeValidator<P extends PredicatorShape>(
       }
       return true
     },
-    report(input, context) {
+    report(_input, context) {
       const { key, message } = context[messageSymbol]
-      return message.replace(/^Expected/, `Expected property, '${key}',`)
+
+      if (propertyErrorRegexp.test(message)) {
+        return message.replace(
+          propertyErrorRegexp,
+          `Expected property, \`${key}.$1\`,`
+        )
+      }
+
+      return message.replace(valueErrorRegexp, `Expected property, \`${key}\`,`)
     }
   }
 }

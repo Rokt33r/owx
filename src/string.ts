@@ -4,7 +4,7 @@ import is from '@sindresorhus/is'
 export const stringValidator: Validator<string> = {
   validate: is.string,
   report(input) {
-    return `Expected to be string, got '${input}'`
+    return `Expected value to be string, got \`${input}\``
   }
 }
 
@@ -16,7 +16,7 @@ export function createStringLengthValidator(
       return input.length === length
     },
     report(input) {
-      return `Expected to have length '${length}', got '${input.length}'`
+      return `Expected value to have length \`${length}\`, got \`${input.length}\``
     }
   }
 }
@@ -29,7 +29,7 @@ export function createStringMinLengthValidator(
       return input.length >= length
     },
     report(input) {
-      return `Expected to have a minimum length of '${length}', got '${input}'`
+      return `Expected value to have a minimum length of \`${length}\`, got \`${input}\``
     }
   }
 }
@@ -42,7 +42,7 @@ export function createStringMaxLengthValidator(
       return input.length <= length
     },
     report(input) {
-      return `Expected to have a maximum length of '${length}', got '${input}'`
+      return `Expected value to have a maximum length of \`${length}\`, got \`${input}\``
     }
   }
 }
@@ -55,7 +55,7 @@ export function createStringMatchValidator(
       return input.length <= length
     },
     report(input) {
-      return `Expected to match '${regExp}', got '${input}'`
+      return `Expected value to match \`${regExp}\`, got \`${input}\``
     }
   }
 }

@@ -1,38 +1,44 @@
-import { owObj, reportValidation, owStr, isValid } from '../src'
+import { owObj, validate, owStr } from '../src'
 
 describe('owObj', () => {
   it('throws when input is not an object', () => {
     const input = 'Hello, World!'
     const predicate = owObj()
 
-    const result = reportValidation(input, predicate)
-
-    expect(result).toBe(`Expected to be object, got 'Hello, World!'`)
+    expect(() => {
+      validate(input, predicate)
+    }).toThrow('Expected value to be object, got `Hello, World!`')
   })
 
   describe('#shape', () => {
     it('validates with shape', () => {
-      let input: unknown = {
+      const input: unknown = {
         message: 123
       }
-      const shape = {
+      const predicate = owObj().shape({
         message: owStr()
+      })
+
+      expect(() => {
+        validate(input, predicate)
+      }).toThrow('Expected property, `message`, to be string, got `123`')
+    })
+
+    it('validates with nested shape', () => {
+      const input: unknown = {
+        data: {
+          message: 123
+        }
       }
-      const predicate = owObj().shape(shape)
+      const predicate = owObj().shape({
+        data: owObj().shape({
+          message: owStr()
+        })
+      })
 
-      if (isValid(input, predicate)) {
-        input
-      }
-
-      const result = reportValidation(input, predicate)
-
-      expect(result).toBe(
-        `Expected property, 'message', to be string, got '[object Object]'`
-      )
-
-      if (isValid(input, predicate)) {
-        input
-      }
+      expect(() => {
+        validate(input, predicate)
+      }).toThrow('Expected property, `data.message`, to be string, got `123`')
     })
   })
 })
