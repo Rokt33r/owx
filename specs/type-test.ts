@@ -1,7 +1,8 @@
 import { isValid, owShape, owStr } from '../src'
 
+function expectType<T>(value: T) {}
+
 let a: unknown
-let b: { message: string }
 if (
   isValid(
     a,
@@ -10,5 +11,5 @@ if (
     })
   )
 ) {
-  b = a
+  expectType<{ message: string; [key: string]: unknown }>(a)
 }
