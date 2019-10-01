@@ -5,6 +5,7 @@ export class ArgumentError extends Error {
   constructor(message: string, context: Function) {
     super(message)
 
+    /* istanbul ignore next */
     if ('captureStackTrace' in Error) {
       Error.captureStackTrace(this, context)
     }
