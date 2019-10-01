@@ -1,4 +1,4 @@
-import { owObj, validate, owStr } from '../src'
+import { owObj, validate, owStr, owShape } from '../src'
 
 describe('owObj', () => {
   it('throws when input is not an object', () => {
@@ -164,5 +164,71 @@ describe('owObj', () => {
         validate(input, predicate)
       }).toThrow('Expected property, `data.extra`, not to exist, got `456`')
     })
+  })
+
+  describe('#shape', () => {
+    it('uses partialShape by default', () => {
+      const input: unknown = {
+        message: 'Hello, World!',
+        extra: 456
+      }
+      const predicate = owObj().shape({
+        message: owStr()
+      })
+
+      expect(() => {
+        validate(input, predicate)
+      }).not.toThrow()
+    })
+
+    it('uses exactShape when the option is given', () => {
+      const input: unknown = {
+        message: 'Hello, World!',
+        extra: 456
+      }
+      const predicate = owObj().shape(
+        {
+          message: owStr()
+        },
+        true
+      )
+
+      expect(() => {
+        validate(input, predicate)
+      }).toThrow('Expected property, `extra`, not to exist, got `456`')
+    })
+  })
+})
+
+describe('#owShape', () => {
+  it('uses partialShape by default', () => {
+    const input: unknown = {
+      message: 'Hello, World!',
+      extra: 456
+    }
+    const predicate = owShape({
+      message: owStr()
+    })
+
+    expect(() => {
+      validate(input, predicate)
+    }).not.toThrow()
+  })
+
+  it('uses exactShape when the option is given', () => {
+    const input: unknown = {
+      message: 'Hello, World!',
+      extra: 456
+    }
+    const predicate = owShape(
+      {
+        message: owStr()
+      },
+      true
+    )
+
+    expect(() => {
+      validate(input, predicate)
+    }).toThrow('Expected property, `extra`, not to exist, got `456`')
   })
 })
