@@ -345,6 +345,29 @@ describe('owObj', () => {
       )
     })
   })
+
+  describe('instanceOf', () => {
+    it('validates input is instance of target', () => {
+      class Data {}
+      const input = new Data()
+      const predicator = owObj().instanceOf(Data)
+
+      expect(() => {
+        validate(input, predicator)
+      }).not.toThrow()
+    })
+
+    it('throws if input is not instance of target', () => {
+      class Data {}
+      class WrongData {}
+      const input = new WrongData()
+      const predicator = owObj().instanceOf(Data)
+
+      expect(() => {
+        validate(input, predicator)
+      }).toThrow('Expected value to be instance of `Data`, got `WrongData`')
+    })
+  })
 })
 
 describe('#owShape', () => {

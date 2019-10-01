@@ -183,6 +183,24 @@ function createObjectDeepEqual<O extends object>(
   }
 }
 
+function createObjectInstanceOfValidator<F extends Function>(
+  instance: F
+): Validator<F, object> {
+  return {
+    validate(input): input is F {
+      return input instanceof instance
+    },
+    report(input) {
+      let { name } = input.constructor
+
+      if (!name || name === 'Object') {
+        name = JSON.stringify(input)
+      }
+      return `Expected value to be instance of \`${instance.name}\`, got \`${name}\``
+    }
+  }
+}
+
 class ObjectPredicator<O extends object>
   implements Predicator<Predicate<object>> {
   constructor(validators: Validator<any>[] = [objectValidator]) {
@@ -243,6 +261,10 @@ class ObjectPredicator<O extends object>
 
   deepEqual<OO extends O>(expected: OO): ObjectPredicator<OO> {
     return this.addValidator(createObjectDeepEqual(expected))
+  }
+
+  instanceOf<F extends Function>(instance: F): ObjectPredicator<F> {
+    return this.addValidator(createObjectInstanceOfValidator(instance))
   }
 }
 
