@@ -3,10 +3,10 @@ import { owObj, validate, owStr, owShape } from '../src'
 describe('owObj', () => {
   it('throws when input is not an object', () => {
     const input = 'Hello, World!'
-    const predicate = owObj()
+    const predicator = owObj()
 
     expect(() => {
-      validate(input, predicate)
+      validate(input, predicator)
     }).toThrow('Expected value to be object, got `Hello, World!`')
   })
 
@@ -15,12 +15,12 @@ describe('owObj', () => {
       const input: unknown = {
         message: 'Hello, World!'
       }
-      const predicate = owObj().partialShape({
+      const predicator = owObj().partialShape({
         message: owStr()
       })
 
       expect(() => {
-        validate(input, predicate)
+        validate(input, predicator)
       }).not.toThrow()
     })
 
@@ -30,14 +30,14 @@ describe('owObj', () => {
           message: 'Hello, World!'
         }
       }
-      const predicate = owObj().partialShape({
+      const predicator = owObj().partialShape({
         data: owObj().partialShape({
           message: owStr()
         })
       })
 
       expect(() => {
-        validate(input, predicate)
+        validate(input, predicator)
       }).not.toThrow()
     })
 
@@ -45,12 +45,12 @@ describe('owObj', () => {
       const input: unknown = {
         message: 123
       }
-      const predicate = owObj().partialShape({
+      const predicator = owObj().partialShape({
         message: owStr()
       })
 
       expect(() => {
-        validate(input, predicate)
+        validate(input, predicator)
       }).toThrow('Expected property, `message`, to be string, got `123`')
     })
 
@@ -60,14 +60,14 @@ describe('owObj', () => {
           message: 123
         }
       }
-      const predicate = owObj().partialShape({
+      const predicator = owObj().partialShape({
         data: owObj().partialShape({
           message: owStr()
         })
       })
 
       expect(() => {
-        validate(input, predicate)
+        validate(input, predicator)
       }).toThrow('Expected property, `data.message`, to be string, got `123`')
     })
   })
@@ -77,12 +77,12 @@ describe('owObj', () => {
       const input: unknown = {
         message: 'Hello, World!'
       }
-      const predicate = owObj().exactShape({
+      const predicator = owObj().exactShape({
         message: owStr()
       })
 
       expect(() => {
-        validate(input, predicate)
+        validate(input, predicator)
       }).not.toThrow()
     })
 
@@ -92,14 +92,14 @@ describe('owObj', () => {
           message: 'Hello, World!'
         }
       }
-      const predicate = owObj().exactShape({
+      const predicator = owObj().exactShape({
         data: owObj().exactShape({
           message: owStr()
         })
       })
 
       expect(() => {
-        validate(input, predicate)
+        validate(input, predicator)
       }).not.toThrow()
     })
 
@@ -107,12 +107,12 @@ describe('owObj', () => {
       const input: unknown = {
         message: 123
       }
-      const predicate = owObj().exactShape({
+      const predicator = owObj().exactShape({
         message: owStr()
       })
 
       expect(() => {
-        validate(input, predicate)
+        validate(input, predicator)
       }).toThrow('Expected property, `message`, to be string, got `123`')
     })
 
@@ -122,14 +122,14 @@ describe('owObj', () => {
           message: 123
         }
       }
-      const predicate = owObj().exactShape({
+      const predicator = owObj().exactShape({
         data: owObj().exactShape({
           message: owStr()
         })
       })
 
       expect(() => {
-        validate(input, predicate)
+        validate(input, predicator)
       }).toThrow('Expected property, `data.message`, to be string, got `123`')
     })
 
@@ -138,12 +138,12 @@ describe('owObj', () => {
         message: 'Hello, World!',
         extra: 456
       }
-      const predicate = owObj().exactShape({
+      const predicator = owObj().exactShape({
         message: owStr()
       })
 
       expect(() => {
-        validate(input, predicate)
+        validate(input, predicator)
       }).toThrow('Expected property, `extra`, not to exist, got `456`')
     })
 
@@ -154,14 +154,14 @@ describe('owObj', () => {
           extra: 456
         }
       }
-      const predicate = owObj().exactShape({
+      const predicator = owObj().exactShape({
         data: owObj().exactShape({
           message: owStr()
         })
       })
 
       expect(() => {
-        validate(input, predicate)
+        validate(input, predicator)
       }).toThrow('Expected property, `data.extra`, not to exist, got `456`')
     })
   })
@@ -172,12 +172,12 @@ describe('owObj', () => {
         message: 'Hello, World!',
         extra: 456
       }
-      const predicate = owObj().shape({
+      const predicator = owObj().shape({
         message: owStr()
       })
 
       expect(() => {
-        validate(input, predicate)
+        validate(input, predicator)
       }).not.toThrow()
     })
 
@@ -186,7 +186,7 @@ describe('owObj', () => {
         message: 'Hello, World!',
         extra: 456
       }
-      const predicate = owObj().shape(
+      const predicator = owObj().shape(
         {
           message: owStr()
         },
@@ -194,7 +194,7 @@ describe('owObj', () => {
       )
 
       expect(() => {
-        validate(input, predicate)
+        validate(input, predicator)
       }).toThrow('Expected property, `extra`, not to exist, got `456`')
     })
   })
@@ -202,19 +202,19 @@ describe('owObj', () => {
   describe('#empty', () => {
     it('validates object has no keys', () => {
       const input = {}
-      const predicate = owObj().empty()
+      const predicator = owObj().empty()
 
       expect(() => {
-        validate(input, predicate)
+        validate(input, predicator)
       }).not.toThrow()
     })
 
     it('throws when object has keys', () => {
       const input = { message: 'Hello, World!' }
-      const predicate = owObj().empty()
+      const predicator = owObj().empty()
 
       expect(() => {
-        validate(input, predicate)
+        validate(input, predicator)
       }).toThrow(
         'Expected value to be empty, got `{"message":"Hello, World!"}`'
       )
@@ -224,19 +224,19 @@ describe('owObj', () => {
   describe('#nonEmpty', () => {
     it('validates object has keys', () => {
       const input = { message: 'Hello, World!' }
-      const predicate = owObj().nonEmpty()
+      const predicator = owObj().nonEmpty()
 
       expect(() => {
-        validate(input, predicate)
+        validate(input, predicator)
       }).not.toThrow()
     })
 
     it('throws when object has no keys', () => {
       const input = {}
-      const predicate = owObj().nonEmpty()
+      const predicator = owObj().nonEmpty()
 
       expect(() => {
-        validate(input, predicate)
+        validate(input, predicator)
       }).toThrow('Expected value to not be empty')
     })
   })
@@ -248,12 +248,12 @@ describe('#owShape', () => {
       message: 'Hello, World!',
       extra: 456
     }
-    const predicate = owShape({
+    const predicator = owShape({
       message: owStr()
     })
 
     expect(() => {
-      validate(input, predicate)
+      validate(input, predicator)
     }).not.toThrow()
   })
 
@@ -262,7 +262,7 @@ describe('#owShape', () => {
       message: 'Hello, World!',
       extra: 456
     }
-    const predicate = owShape(
+    const predicator = owShape(
       {
         message: owStr()
       },
@@ -270,7 +270,7 @@ describe('#owShape', () => {
     )
 
     expect(() => {
-      validate(input, predicate)
+      validate(input, predicator)
     }).toThrow('Expected property, `extra`, not to exist, got `456`')
   })
 })
