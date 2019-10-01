@@ -133,7 +133,44 @@ const objectNonEmptyValidator: Validator<object, object> = {
   }
 }
 
-function createObjectDeepEqual<O extends object>(expected: O): Validator<O> {
+type ValuesOfType<O> = { [key: string]: O }
+
+function createObjectValuesOfType<O>(
+  predicator: Predicator<Predicate<O>>
+): Validator<ValuesOfType<O>, object> {
+  const messageSymbol = Symbol()
+  return {
+    validate(input, context): input is ValuesOfType<O> {
+      for (const key in input) {
+        const message = reportValidation(input[key], predicator)
+        if (message != null) {
+          context[messageSymbol] = {
+            key,
+            message
+          }
+          return false
+        }
+      }
+      return true
+    },
+    report(_input, context) {
+      const { key, message } = context[messageSymbol]
+
+      if (propertyErrorRegexp.test(message)) {
+        return message.replace(
+          propertyErrorRegexp,
+          `Expected property, \`${key}.$1\`,`
+        )
+      }
+
+      return message.replace(valueErrorRegexp, `Expected property, \`${key}\`,`)
+    }
+  }
+}
+
+function createObjectDeepEqual<O extends object>(
+  expected: O
+): Validator<O, object> {
   return {
     validate(input): input is O {
       return isEqual(input, expected)
@@ -196,6 +233,12 @@ class ObjectPredicator<O extends object>
 
   nonEmpty(): ObjectPredicator<O> {
     return this.addValidator(objectNonEmptyValidator)
+  }
+
+  valuesOfType<OO>(
+    predicator: Predicator<Predicate<O>>
+  ): ObjectPredicator<ValuesOfType<OO>> {
+    return this.addValidator(createObjectValuesOfType(predicator))
   }
 
   deepEqual<OO extends O>(expected: OO): ObjectPredicator<OO> {

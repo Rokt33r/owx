@@ -262,6 +262,52 @@ describe('owObj', () => {
     })
   })
 
+  describe('#valuesOfType', () => {
+    it('validates values in object', () => {
+      const input = {
+        message: 'Hello, World!',
+        message2: 'Hello, World2!'
+      }
+      const predicator = owObj().valuesOfType(owStr())
+
+      expect(() => {
+        validate(input, predicator)
+      }).not.toThrow()
+    })
+
+    it('throws when any values in object are invalid', () => {
+      const input = {
+        message: 123,
+        message2: 'Hello, World2!'
+      }
+      const predicator = owObj().valuesOfType(owStr())
+
+      expect(() => {
+        validate(input, predicator)
+      }).toThrow('Expected property, `message`, to be string, got `123`')
+    })
+
+    it('throws when any values in object are invalid(nested)', () => {
+      const input = {
+        item1: {
+          message: 123
+        },
+        item2: {
+          message: 'Hello, World2!'
+        }
+      }
+      const predicator = owObj().valuesOfType(
+        owShape({
+          message: owStr()
+        })
+      )
+
+      expect(() => {
+        validate(input, predicator)
+      }).toThrow('Expected property, `item1.message`, to be string, got `123`')
+    })
+  })
+
   describe('#deepEqual', () => {
     it('validates input is deeply equal to target', () => {
       const input = {
