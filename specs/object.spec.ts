@@ -198,6 +198,48 @@ describe('owObj', () => {
       }).toThrow('Expected property, `extra`, not to exist, got `456`')
     })
   })
+
+  describe('#empty', () => {
+    it('validates object has no keys', () => {
+      const input = {}
+      const predicate = owObj().empty()
+
+      expect(() => {
+        validate(input, predicate)
+      }).not.toThrow()
+    })
+
+    it('throws when object has keys', () => {
+      const input = { message: 'Hello, World!' }
+      const predicate = owObj().empty()
+
+      expect(() => {
+        validate(input, predicate)
+      }).toThrow(
+        'Expected value to be empty, got `{"message":"Hello, World!"}`'
+      )
+    })
+  })
+
+  describe('#nonEmpty', () => {
+    it('validates object has keys', () => {
+      const input = { message: 'Hello, World!' }
+      const predicate = owObj().nonEmpty()
+
+      expect(() => {
+        validate(input, predicate)
+      }).not.toThrow()
+    })
+
+    it('throws when object has no keys', () => {
+      const input = {}
+      const predicate = owObj().nonEmpty()
+
+      expect(() => {
+        validate(input, predicate)
+      }).toThrow('Expected value to not be empty')
+    })
+  })
 })
 
 describe('#owShape', () => {
