@@ -105,6 +105,24 @@ export function createObjectExactShapeValidator<P extends PredicatorShape>(
   }
 }
 
+const objectEmptyValidator: Validator<object, object> = {
+  validate(input): input is object {
+    return Object.keys(input).length === 0
+  },
+  report(input) {
+    return `Expected value to be empty, got \`${JSON.stringify(input)}\``
+  }
+}
+
+const objectNonEmptyValidator: Validator<object, object> = {
+  validate(input): input is object {
+    return Object.keys(input).length > 0
+  },
+  report() {
+    return `Expected value to not be empty`
+  }
+}
+
 class ObjectPredicator<O extends object>
   implements Predicator<Predicate<object>> {
   constructor(validators: Validator<any>[] = [objectValidator]) {
@@ -114,18 +132,20 @@ class ObjectPredicator<O extends object>
   }
   predicate: Predicate<O>
 
-  partialShape<S extends PredicatorShape>(shape: S) {
-    return new ObjectPredicator<O & Unshape<S> & { [key: string]: unknown }>([
-      ...this.predicate.validators,
-      createObjectPartialShapeValidator(shape)
-    ])
+  addValidator<OO extends object>(validator: Validator<OO, object>) {
+    return new ObjectPredicator<OO>([...this.predicate.validators, validator])
   }
 
-  exactShape<S extends PredicatorShape>(shape: S) {
-    return new ObjectPredicator<O & Unshape<S>>([
-      ...this.predicate.validators,
-      createObjectExactShapeValidator(shape)
-    ])
+  partialShape<S extends PredicatorShape>(
+    shape: S
+  ): ObjectPredicator<O & Unshape<S> & { [key: string]: unknown }> {
+    return this.addValidator(createObjectPartialShapeValidator(shape))
+  }
+
+  exactShape<S extends PredicatorShape>(
+    shape: S
+  ): ObjectPredicator<O & Unshape<S>> {
+    return this.addValidator(createObjectExactShapeValidator(shape))
   }
 
   shape<S extends PredicatorShape>(
@@ -141,6 +161,14 @@ class ObjectPredicator<O extends object>
       return this.exactShape(shape)
     }
     return this.partialShape(shape)
+  }
+
+  empty(): ObjectPredicator<O> {
+    return this.addValidator(objectEmptyValidator)
+  }
+
+  nonEmpty(): ObjectPredicator<O> {
+    return this.addValidator(objectNonEmptyValidator)
   }
 }
 
