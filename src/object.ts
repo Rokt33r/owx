@@ -106,6 +106,15 @@ export function createObjectExactShapeValidator<P extends PredicatorShape>(
   }
 }
 
+const objectPlainValidator: Validator<object, object> = {
+  validate(input): input is object {
+    return is.plainObject(input)
+  },
+  report() {
+    return `Expected value to be a plain object`
+  }
+}
+
 const objectEmptyValidator: Validator<object, object> = {
   validate(input): input is object {
     return Object.keys(input).length === 0
@@ -175,6 +184,10 @@ class ObjectPredicator<O extends object>
       return this.exactShape(shape)
     }
     return this.partialShape(shape)
+  }
+
+  plain(): ObjectPredicator<O> {
+    return this.addValidator(objectPlainValidator)
   }
 
   empty(): ObjectPredicator<O> {

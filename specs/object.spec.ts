@@ -199,6 +199,27 @@ describe('owObj', () => {
     })
   })
 
+  describe('#plain', () => {
+    it('validates plain object', () => {
+      const input: unknown = {}
+      const predicator = owObj().plain()
+
+      expect(() => {
+        validate(input, predicator)
+      }).not.toThrow()
+    })
+
+    it('throws when input is not plain object', () => {
+      class NotPlain {}
+      const input: unknown = new NotPlain()
+      const predicator = owObj().plain()
+
+      expect(() => {
+        validate(input, predicator)
+      }).toThrow('Expected value to be a plain object')
+    })
+  })
+
   describe('#empty', () => {
     it('validates object has no keys', () => {
       const input = {}
