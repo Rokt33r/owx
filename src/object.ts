@@ -7,6 +7,7 @@ import {
   reportValidation,
   Predicate
 } from './owx'
+import isEqual from 'lodash.isequal'
 
 export const objectValidator: Validator<object> = {
   validate: is.object,
@@ -123,6 +124,19 @@ const objectNonEmptyValidator: Validator<object, object> = {
   }
 }
 
+function createObjectDeepEqual<O extends object>(expected: O): Validator<O> {
+  return {
+    validate(input): input is O {
+      return isEqual(input, expected)
+    },
+    report(input) {
+      return `Expected value to be deeply equal to \`${JSON.stringify(
+        expected
+      )}\`, got \`${JSON.stringify(input)}\``
+    }
+  }
+}
+
 class ObjectPredicator<O extends object>
   implements Predicator<Predicate<object>> {
   constructor(validators: Validator<any>[] = [objectValidator]) {
@@ -169,6 +183,10 @@ class ObjectPredicator<O extends object>
 
   nonEmpty(): ObjectPredicator<O> {
     return this.addValidator(objectNonEmptyValidator)
+  }
+
+  deepEqual<OO extends O>(expected: OO): ObjectPredicator<OO> {
+    return this.addValidator(createObjectDeepEqual(expected))
   }
 }
 

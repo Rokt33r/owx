@@ -240,6 +240,44 @@ describe('owObj', () => {
       }).toThrow('Expected value to not be empty')
     })
   })
+
+  describe('#deepEqual', () => {
+    it('validates input is deeply equal to target', () => {
+      const input = {
+        data: {
+          message: 'Hello, World!'
+        }
+      }
+      const predicator = owObj().deepEqual({
+        data: {
+          message: 'Hello, World!'
+        }
+      })
+
+      expect(() => {
+        validate(input, predicator)
+      }).not.toThrow()
+    })
+
+    it('validates input is deeply equal to target', () => {
+      const input = {
+        data: {
+          message: 123
+        }
+      }
+      const predicator = owObj().deepEqual({
+        data: {
+          message: 'Hello, World!'
+        }
+      })
+
+      expect(() => {
+        validate(input, predicator)
+      }).toThrowError(
+        'Expected value to be deeply equal to `{"data":{"message":"Hello, World!"}}`, got `{"data":{"message":123}}`'
+      )
+    })
+  })
 })
 
 describe('#owShape', () => {
