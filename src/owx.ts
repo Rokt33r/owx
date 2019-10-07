@@ -1,5 +1,4 @@
 import { ArgumentError } from './ArgumentError'
-import { owStr } from './string'
 
 export interface Validator<O extends I, I = any> {
   validate(input: I, context: {}): input is O
