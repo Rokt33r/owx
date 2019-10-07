@@ -106,4 +106,15 @@ describe('owx', () => {
       )
     })
   })
+
+  describe('#anyx', () => {
+    it('throws value does not match any of predicator', () => {
+      const input = 'b'
+      const predicator = owx.anyx(owStr().equals('a'), owStr().equals('b'))
+
+      expect(() => {
+        validate(input, predicator)
+      }).not.toThrow()
+    })
+  })
 })

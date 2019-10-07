@@ -41,7 +41,17 @@ if (
   expectType<{ message: string }>(unknownValue)
 }
 
-// owAny
+// owx.any
 if (isValid(unknownValue, owx.any(owStr().equals('a'), owStr().equals('b')))) {
+  expectType<'a' | 'b'>(unknownValue)
+}
+
+// owx.anyx
+if (
+  isValid(
+    unknownValue,
+    owx.anyx<'a' | 'b'>(owStr().equals('a'), owStr().equals('b'))
+  )
+) {
   expectType<'a' | 'b'>(unknownValue)
 }

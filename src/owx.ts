@@ -78,9 +78,9 @@ export const owx = {
   anyx
 }
 
-function anyx(
+function anyx<T>(
   ...predicators: Predicator<Predicate<any>>[]
-): Predicator<Predicate<any>> {
+): Predicator<Predicate<T>> {
   const messagesSymbol = Symbol()
   const validator: Validator<any> = {
     validate(input, context): input is any {
