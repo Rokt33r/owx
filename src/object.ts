@@ -9,7 +9,7 @@ import {
 } from './owx'
 import isEqual from 'lodash.isequal'
 
-export const objectValidator: Validator<object> = {
+const objectValidator: Validator<object> = {
   validate: is.object,
   report(input) {
     return `Expected value to be object, got \`${input}\``
@@ -19,7 +19,7 @@ export const objectValidator: Validator<object> = {
 const valueErrorRegexp = /^Expected value/
 const propertyErrorRegexp = /^Expected property, `(.+)`,/
 
-export function createObjectPartialShapeValidator<P extends PredicatorShape>(
+function createObjectPartialShapeValidator<P extends PredicatorShape>(
   shape: P
 ): Validator<Unshape<P> & { [key: string]: unknown }, object> {
   const messageSymbol = Symbol()
