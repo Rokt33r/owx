@@ -50,7 +50,7 @@ function createStringMaxLengthValidator(
 function createStringMatchValidator(regExp: RegExp): Validator<string, string> {
   return {
     validate(input): input is string {
-      return input.length <= length
+      return regExp.test(input)
     },
     report(input) {
       return `Expected value to match \`${regExp}\`, got \`${input}\``
@@ -98,22 +98,22 @@ function createStringIncludesValidator(
 }
 
 function createStringOneOfValidator<A extends string[]>(
-  ...searchStrings: A
+  expectedList: A
 ): Validator<A[number], string> {
   return {
     validate(input): input is A[number] {
-      return searchStrings.some(searchString => searchString === input)
+      return expectedList.some(searchString => searchString === input)
     },
     report(input) {
       const limit = 10
-      const overflow = searchStrings.length - limit
+      const overflow = expectedList.length - limit
       const printedList =
-        searchStrings.length > limit
-          ? JSON.stringify(searchStrings.slice(0, limit)).replace(
+        expectedList.length > limit
+          ? JSON.stringify(expectedList.slice(0, limit)).replace(
               /]$/,
               `,…+${overflow} more]`
             )
-          : JSON.stringify(searchStrings)
+          : JSON.stringify(expectedList)
 
       return `Expected value to be one of \`${printedList}\`, got \`${input}\``
     }
@@ -214,27 +214,93 @@ const stringUrlValidator: Validator<string, string> = {
   }
 }
 
-class StringPredicator implements Predicator<Predicate<string>> {
+class StringPredicator<S extends string> implements Predicator<Predicate<S>> {
   constructor(validators: Validator<any>[] = [stringValidator]) {
     this.predicate = {
       validators
     }
   }
-  predicate: Predicate<string>
+  predicate: Predicate<S>
 
-  length(length: number) {
-    return new StringPredicator([
-      ...this.predicate.validators,
-      createStringLengthValidator(length)
-    ])
+  addValidator<SS extends string>(
+    validator: Validator<SS, string>
+  ): StringPredicator<SS> {
+    return new StringPredicator<SS>([...this.predicate.validators, validator])
   }
-  // min(length: number): StringPredicate
 
-  // max(length: number): StringPredicate
+  length(length: number): StringPredicator<S> {
+    return this.addValidator(createStringLengthValidator(length))
+  }
 
-  // match(regExp: RegExp): StringPredicate
+  min(length: number): StringPredicator<S> {
+    return this.addValidator(createStringMinLengthValidator(length))
+  }
+
+  max(length: number): StringPredicator<S> {
+    return this.addValidator(createStringMaxLengthValidator(length))
+  }
+
+  match(regExp: RegExp): StringPredicator<S> {
+    return this.addValidator(createStringMatchValidator(regExp))
+  }
+
+  startsWith(searchString: string): StringPredicator<S> {
+    return this.addValidator(createStringStartsWithValidator(searchString))
+  }
+
+  endsWith(searchString: string): StringPredicator<S> {
+    return this.addValidator(createStringEndsWithValidator(searchString))
+  }
+
+  includes(searchString: string): StringPredicator<S> {
+    return this.addValidator(createStringIncludesValidator(searchString))
+  }
+
+  oneOf<A extends string[]>(...expectedList: A): StringPredicator<A[number]> {
+    return this.addValidator(createStringOneOfValidator(expectedList))
+  }
+
+  empty(): StringPredicator<''> {
+    return this.addValidator(stringEmptyValidator)
+  }
+
+  nonEmpty(): StringPredicator<S> {
+    return this.addValidator(stringNonEmptyValidator)
+  }
+
+  equals<SS extends string>(expected: SS): StringPredicator<SS> {
+    return this.addValidator(createStringEqualsValidator(expected))
+  }
+
+  alphanumeric(): StringPredicator<S> {
+    return this.addValidator(stringAlphanumericValidator)
+  }
+
+  alphabetical(): StringPredicator<S> {
+    return this.addValidator(stringAlphabeticalValidator)
+  }
+
+  numeric(): StringPredicator<S> {
+    return this.addValidator(stringNumericValidator)
+  }
+
+  date(): StringPredicator<S> {
+    return this.addValidator(stringDateValidator)
+  }
+
+  lowercase(): StringPredicator<S> {
+    return this.addValidator(stringLowercaseValidator)
+  }
+
+  uppercase(): StringPredicator<S> {
+    return this.addValidator(stringUppercaseValidator)
+  }
+
+  url(): StringPredicator<S> {
+    return this.addValidator(stringUrlValidator)
+  }
 }
 
-export function owStr(): StringPredicator {
+export function owStr(): StringPredicator<string> {
   return new StringPredicator()
 }
