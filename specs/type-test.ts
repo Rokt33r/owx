@@ -1,4 +1,4 @@
-import { isValid, owShape, owStr } from '../src'
+import { isValid, owShape, owStr, owx } from '../src'
 
 function expectType<T>(value: T) {}
 
@@ -39,4 +39,9 @@ if (
   )
 ) {
   expectType<{ message: string }>(unknownValue)
+}
+
+// owAny
+if (isValid(unknownValue, owx.any(owStr().equals('a'), owStr().equals('b')))) {
+  expectType<'a' | 'b'>(unknownValue)
 }
