@@ -367,6 +367,18 @@ describe('owObj', () => {
         validate(input, predicator)
       }).toThrow('Expected value to be instance of `Data`, got `WrongData`')
     })
+
+    it('stringifies input if it is plain object', () => {
+      class Data {}
+      const input = { message: 'Hello, World!' }
+      const predicator = owObj().instanceOf(Data)
+
+      expect(() => {
+        validate(input, predicator)
+      }).toThrow(
+        'Expected value to be instance of `Data`, got `{"message":"Hello, World!"}`'
+      )
+    })
   })
 })
 
