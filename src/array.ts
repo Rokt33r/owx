@@ -13,7 +13,7 @@ const arrayEmptyValidator: Validator<any[], any[]> = {
     return input.length === 0
   },
   report(input) {
-    return `Expected value to be empty , got \`${input}\``
+    return `Expected value to be empty, got \`${JSON.stringify(input)}\``
   }
 }
 
@@ -22,7 +22,7 @@ const arrayNonEmptyValidator: Validator<any[], any[]> = {
     return input.length > 0
   },
   report(input) {
-    return `Expected value to not be empty , got \`${input}\``
+    return `Expected value to not be empty`
   }
 }
 
@@ -75,8 +75,24 @@ class ArrayPredicator<A extends any[]> implements Predicator<Predicate<any[]>> {
     return new ArrayPredicator<AA>([...this.predicate.validators, validator])
   }
 
+  empty(): ArrayPredicator<A> {
+    return this.addValidator(arrayEmptyValidator)
+  }
+
+  nonEmpty(): ArrayPredicator<A> {
+    return this.addValidator(arrayNonEmptyValidator)
+  }
+
   length(length: number): ArrayPredicator<A> {
     return this.addValidator(createArrayLengthValidator(length))
+  }
+
+  minLength(length: number): ArrayPredicator<A> {
+    return this.addValidator(createArrayMinLengthValidator(length))
+  }
+
+  maxLength(length: number): ArrayPredicator<A> {
+    return this.addValidator(createArrayMaxLengthValidator(length))
   }
 }
 
