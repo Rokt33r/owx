@@ -8,6 +8,24 @@ const arrayValidator: Validator<any[]> = {
   }
 }
 
+const arrayEmptyValidator: Validator<any[], any[]> = {
+  validate(input): input is any[] {
+    return input.length === 0
+  },
+  report(input) {
+    return `Expected value to be empty , got \`${input}\``
+  }
+}
+
+const arrayNonEmptyValidator: Validator<any[], any[]> = {
+  validate(input): input is any[] {
+    return input.length > 0
+  },
+  report(input) {
+    return `Expected value to not be empty , got \`${input}\``
+  }
+}
+
 function createArrayLengthValidator(length: number): Validator<any[], any[]> {
   return {
     validate(input): input is any[] {
@@ -15,6 +33,31 @@ function createArrayLengthValidator(length: number): Validator<any[], any[]> {
     },
     report(input) {
       return `Expected value to have length \`${length}\`, got \`${input.length}\``
+    }
+  }
+}
+
+function createArrayMinLengthValidator(
+  length: number
+): Validator<any[], any[]> {
+  return {
+    validate(input): input is any[] {
+      return input.length >= length
+    },
+    report(input) {
+      return `Expected value to have a minimum length \`${length}\`, got \`${input.length}\``
+    }
+  }
+}
+function createArrayMaxLengthValidator(
+  length: number
+): Validator<any[], any[]> {
+  return {
+    validate(input): input is any[] {
+      return input.length <= length
+    },
+    report(input) {
+      return `Expected value to have a maximum length \`${length}\`, got \`${input.length}\``
     }
   }
 }
