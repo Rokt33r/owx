@@ -1,6 +1,6 @@
 import is from '@sindresorhus/is/dist'
 import { Validator, Predicator, Predicate, reportValidation } from './owx'
-import isEqual = require('lodash.isequal')
+import isEqual from 'lodash.isequal'
 
 const arrayValidator: Validator<any[]> = {
   validate: is.array,
@@ -70,7 +70,7 @@ function createArrayIncludesValidator(
   return {
     validate(input): input is any[] {
       return searchElements.every(searchElement =>
-        input.includes(searchElements)
+        input.includes(searchElement)
       )
     },
     report(input) {
@@ -86,9 +86,7 @@ function createArrayIncludesAnyValidator(
 ): Validator<any[], any[]> {
   return {
     validate(input): input is any[] {
-      return searchElements.some(searchElement =>
-        input.includes(searchElements)
-      )
+      return searchElements.some(searchElement => input.includes(searchElement))
     },
     report(input) {
       return `Expected value to include any element of \`${JSON.stringify(
