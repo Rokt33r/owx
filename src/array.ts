@@ -1,5 +1,6 @@
 import is from '@sindresorhus/is/dist'
-import { Validator, Predicator, Predicate } from './owx'
+import { Validator, Predicator, Predicate, reportValidation } from './owx'
+import isEqual = require('lodash.isequal')
 
 const arrayValidator: Validator<any[]> = {
   validate: is.array,
@@ -49,6 +50,7 @@ function createArrayMinLengthValidator(
     }
   }
 }
+
 function createArrayMaxLengthValidator(
   length: number
 ): Validator<any[], any[]> {
@@ -58,6 +60,91 @@ function createArrayMaxLengthValidator(
     },
     report(input) {
       return `Expected value to have a maximum length \`${length}\`, got \`${input.length}\``
+    }
+  }
+}
+
+function createArrayIncludesValidator(
+  searchElements: any[]
+): Validator<any[], any[]> {
+  return {
+    validate(input): input is any[] {
+      return searchElements.every(searchElement =>
+        input.includes(searchElements)
+      )
+    },
+    report(input) {
+      return `Expected value to include all elements of \`${JSON.stringify(
+        searchElements
+      )}\`, got \`${JSON.stringify(input)}\``
+    }
+  }
+}
+
+function createArrayIncludesAnyValidator(
+  searchElements: any[]
+): Validator<any[], any[]> {
+  return {
+    validate(input): input is any[] {
+      return searchElements.some(searchElement =>
+        input.includes(searchElements)
+      )
+    },
+    report(input) {
+      return `Expected value to include any element of \`${JSON.stringify(
+        searchElements
+      )}\`, got \`${JSON.stringify(input)}\``
+    }
+  }
+}
+
+function createArrayDeepEqualValidator(
+  expected: any[]
+): Validator<any[], any[]> {
+  return {
+    validate(input): input is any[] {
+      return isEqual(input, expected)
+    },
+    report(input) {
+      return `Expected value to be deeply equal to \`${JSON.stringify(
+        expected
+      )}\`, got \`${JSON.stringify(input)}\``
+    }
+  }
+}
+
+const valueErrorRegexp = /^Expected value/
+const propertyErrorRegexp = /^Expected property, `(.+)`,/
+
+function createArrayOfType<I>(
+  predicator: Predicator<Predicate<I>>
+): Validator<I[], any[]> {
+  const messageSymbol = Symbol()
+  return {
+    validate(input, context): input is I[] {
+      for (let index = 0; index < input.length; index++) {
+        const result = reportValidation(input[index], predicator)
+        if (result != null) {
+          context[messageSymbol] = {
+            key: index,
+            message: result
+          }
+          return false
+        }
+      }
+      return true
+    },
+    report(_input, context) {
+      const { key, message } = context[messageSymbol]
+
+      if (propertyErrorRegexp.test(message)) {
+        return message.replace(
+          propertyErrorRegexp,
+          `Expected property, \`${key}.$1\`,`
+        )
+      }
+
+      return message.replace(valueErrorRegexp, `Expected property, \`${key}\`,`)
     }
   }
 }
@@ -93,6 +180,24 @@ class ArrayPredicator<A extends any[]> implements Predicator<Predicate<any[]>> {
 
   maxLength(length: number): ArrayPredicator<A> {
     return this.addValidator(createArrayMaxLengthValidator(length))
+  }
+
+  includes(...searchElements: A): ArrayPredicator<A> {
+    return this.addValidator(createArrayIncludesValidator(searchElements))
+  }
+
+  includesAny(...searchElements: A): ArrayPredicator<A> {
+    return this.addValidator(createArrayIncludesAnyValidator(searchElements))
+  }
+
+  deepEqual<AA extends A>(expected: AA): ArrayPredicator<AA> {
+    return this.addValidator(createArrayDeepEqualValidator(expected))
+  }
+
+  ofType<I extends A[number]>(
+    predicator: Predicator<Predicate<I>>
+  ): ArrayPredicator<I[]> {
+    return this.addValidator(createArrayOfType(predicator))
   }
 }
 
