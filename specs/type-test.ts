@@ -1,4 +1,4 @@
-import { isValid, owShape, owStr, owx } from '../src'
+import { isValid, owShape, owStr, owx, owArr } from '../src'
 
 function expectType<T>(value: T) {}
 
@@ -54,4 +54,9 @@ if (
   )
 ) {
   expectType<'a' | 'b'>(unknownValue)
+}
+
+// owarr#ofType
+if (isValid(unknownValue, owArr().ofType(owStr().oneOf('a', 'b')))) {
+  expectType<Array<'a' | 'b'>>(unknownValue)
 }
