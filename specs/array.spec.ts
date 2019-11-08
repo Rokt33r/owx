@@ -10,6 +10,15 @@ describe('owArr', () => {
     }).not.toThrow()
   })
 
+  it('throws if value is not an array', () => {
+    const input = 123
+    const predicator = owArr()
+
+    expect(() => {
+      validate(input, predicator)
+    }).toThrow('Expected value to be of type `Array` but received `number`')
+  })
+
   describe('#empty', () => {
     it('validate an array is empty', () => {
       const input: any[] = []

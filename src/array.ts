@@ -5,7 +5,9 @@ import isEqual from 'lodash.isequal'
 const arrayValidator: Validator<any[]> = {
   validate: is.array,
   report(input) {
-    return `Expected value to be an array, got \`${input}\``
+    return `Expected value to be of type \`Array\` but received \`${is(
+      input
+    )}\``
   }
 }
 

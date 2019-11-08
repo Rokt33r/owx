@@ -56,7 +56,9 @@ describe('reportValidation', () => {
 
     const result = reportValidation(input, predicator)
 
-    expect(result).toBe('Expected value to be object, got `Hello, World!`')
+    expect(result).toBe(
+      'Expected value to be of type `Object` but received `string`'
+    )
   })
 })
 

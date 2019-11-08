@@ -4,7 +4,9 @@ import is from '@sindresorhus/is'
 const stringValidator: Validator<string> = {
   validate: is.string,
   report(input) {
-    return `Expected value to be string, got \`${input}\``
+    return `Expected value to be of type \`string\` but received \`${is(
+      input
+    )}\``
   }
 }
 

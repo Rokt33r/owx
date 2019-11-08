@@ -12,7 +12,9 @@ import isEqual from 'lodash.isequal'
 const objectValidator: Validator<object> = {
   validate: is.object,
   report(input) {
-    return `Expected value to be object, got \`${input}\``
+    return `Expected value to be of type \`Object\` but received \`${is(
+      input
+    )}\``
   }
 }
 

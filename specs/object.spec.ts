@@ -7,7 +7,7 @@ describe('owObj', () => {
 
     expect(() => {
       validate(input, predicator)
-    }).toThrow('Expected value to be object, got `Hello, World!`')
+    }).toThrow('Expected value to be of type `Object` but received `string`')
   })
 
   describe('#partialShape', () => {
@@ -51,7 +51,9 @@ describe('owObj', () => {
 
       expect(() => {
         validate(input, predicator)
-      }).toThrow('Expected property, `message`, to be string, got `123`')
+      }).toThrow(
+        'Expected property, `message`, to be of type `string` but received `number`'
+      )
     })
 
     it('reports a nested invalid property', () => {
@@ -68,7 +70,9 @@ describe('owObj', () => {
 
       expect(() => {
         validate(input, predicator)
-      }).toThrow('Expected property, `data.message`, to be string, got `123`')
+      }).toThrow(
+        'Expected property, `data.message`, to be of type `string` but received `number`'
+      )
     })
   })
 
@@ -113,7 +117,9 @@ describe('owObj', () => {
 
       expect(() => {
         validate(input, predicator)
-      }).toThrow('Expected property, `message`, to be string, got `123`')
+      }).toThrow(
+        'Expected property, `message`, to be of type `string` but received `number`'
+      )
     })
 
     it('reports a nested invalid property', () => {
@@ -130,7 +136,9 @@ describe('owObj', () => {
 
       expect(() => {
         validate(input, predicator)
-      }).toThrow('Expected property, `data.message`, to be string, got `123`')
+      }).toThrow(
+        'Expected property, `data.message`, to be of type `string` but received `number`'
+      )
     })
 
     it('reports an extra property', () => {
@@ -284,7 +292,9 @@ describe('owObj', () => {
 
       expect(() => {
         validate(input, predicator)
-      }).toThrow('Expected property, `message`, to be string, got `123`')
+      }).toThrow(
+        'Expected property, `message`, to be of type `string` but received `number`'
+      )
     })
 
     it('throws when any values in object are invalid(nested)', () => {
@@ -304,7 +314,9 @@ describe('owObj', () => {
 
       expect(() => {
         validate(input, predicator)
-      }).toThrow('Expected property, `item1.message`, to be string, got `123`')
+      }).toThrow(
+        'Expected property, `item1.message`, to be of type `string` but received `number`'
+      )
     })
   })
 

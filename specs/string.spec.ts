@@ -16,7 +16,7 @@ describe('owStr', () => {
 
     expect(() => {
       validate(input, predicator)
-    }).toThrow('Expected value to be string')
+    }).toThrow('Expected value to be of type `string` but received `number`')
   })
 
   describe('#length', () => {
