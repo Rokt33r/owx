@@ -1,4 +1,4 @@
-import { isValid, validate, reportValidation, owStr, owObj, owx } from '../src'
+import { isValid, validate, reportValidation, owStr, owObj } from '../src'
 
 describe('isValid', () => {
   it('returns true if input is valid', () => {
@@ -59,64 +59,5 @@ describe('reportValidation', () => {
     expect(result).toBe(
       'Expected value to be of type `Object` but received `string`'
     )
-  })
-})
-
-describe('owx', () => {
-  describe('#any', () => {
-    it('throws value does not match any of predicator', () => {
-      const input = 'b'
-      const predicator = owx.any(owStr().equals('a'), owStr().equals('b'))
-
-      expect(() => {
-        validate(input, predicator)
-      }).not.toThrow()
-    })
-
-    it('throws value does not match any of predicator', () => {
-      const input = 'c'
-      const predicator = owx.any(owStr().equals('a'), owStr().equals('b'))
-
-      expect(() => {
-        validate(input, predicator)
-      }).toThrow(
-        [
-          'Expected value to match any of following conditions',
-          '- Expected value to be equal to `a`, got `c`',
-          '- Expected value to be equal to `b`, got `c`'
-        ].join('\n')
-      )
-    })
-
-    it('throws with indented messages', () => {
-      const input = 'd'
-      const predicator = owx.any(
-        owx.any(owStr().equals('a'), owStr().equals('b')),
-        owStr().equals('c')
-      )
-
-      expect(() => {
-        validate(input, predicator)
-      }).toThrow(
-        [
-          'Expected value to match any of following conditions',
-          '- Expected value to match any of following conditions',
-          '  - Expected value to be equal to `a`, got `d`',
-          '  - Expected value to be equal to `b`, got `d`',
-          '- Expected value to be equal to `c`, got `d`'
-        ].join('\n')
-      )
-    })
-  })
-
-  describe('#anyx', () => {
-    it('throws value does not match any of predicator', () => {
-      const input = 'b'
-      const predicator = owx.anyx(owStr().equals('a'), owStr().equals('b'))
-
-      expect(() => {
-        validate(input, predicator)
-      }).not.toThrow()
-    })
   })
 })
