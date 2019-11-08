@@ -1,6 +1,13 @@
-import { isValid, owShape, owStr, owx, owArr } from '../src'
+import { isValid, validate, owShape, owStr, owx, owArr } from '../src'
 
 function expectType<T>(value: T) {}
+
+// @ts-ignore
+function testValidate(input: unknown) {
+  validate(input, owStr().equals('a'))
+
+  expectType<'a'>(input)
+}
 
 let unknownValue: unknown
 

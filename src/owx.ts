@@ -45,10 +45,10 @@ export function isValid<P extends Predicate<any>>(
   return true
 }
 
-export function validate(
+export function validate<P extends Predicate<any>> (
   input: any,
-  predicator: Predicator<Predicate<any>>
-): void {
+    predicator: Predicator<P>
+): asserts input is PredicateResult<P> {
   const context = {}
   for (const validator of predicator.predicate.validators) {
     const result = validator.validate(input, context)
